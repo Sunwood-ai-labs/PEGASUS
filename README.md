@@ -34,84 +34,79 @@
 >[!IMPORTANT]
 >このリポジトリのリリースノートやREADME、コミットメッセージの9割近くは[claude.ai](https://claude.ai/)や[ChatGPT4](https://chatgpt.com/)を活用した[AIRA](https://github.com/Sunwood-ai-labs/AIRA), [SourceSage](https://github.com/Sunwood-ai-labs/SourceSage), [Gaiah](https://github.com/Sunwood-ai-labs/Gaiah), [HarmonAI_II](https://github.com/Sunwood-ai-labs/HarmonAI_II)で生成しています。
 
-## 🌟 イントロダクション
 
-**Pegasus** は、ウェブサイトを再帰的にクロールし、そのコンテンツを美しくフォーマットされた Markdown ドキュメントに変換する、パワフルで柔軟な Python パッケージです。指定された URL から始まり、リンクをたどって関連するページを探索し、HTML コンテンツを構造化された Markdown ファイルに変換します。コマンドラインインターフェイス（CLI）から実行することも、Python スクリプトから直接使用することもできます。
+pegasus は、ウェブサイトを再帰的にクロールし、そのコンテンツを Markdown 形式に変換するパワフルで柔軟な Python パッケージです。指定した URL から始まり、リンクをたどって関連するページを探索し、HTML コンテンツを美しい Markdown ドキュメントに変換します。コマンドラインインターフェイス (CLI) から実行することも、Python スクリプトから直接使用することもできます。
 
-## 🎥 デモ
+## インストール
 
-*デモ動画は現在準備中です。*
+pip を使用して pegasus をインストールします。
 
-## 🚀 はじめに
-
-このリポジトリには、Pegasus を Docker Compose で簡単に実行するための設定ファイルが含まれています。
-
-### 前提条件
-
-* Docker
-* Docker Compose
-
-### 実行方法
-
-1. リポジトリをクローンします。
-
-```bash
-git clone https://github.com/[あなたのユーザー名]/pegasus-docker-compose.git
+```shell
+pip install pegasus
 ```
 
-2. ディレクトリに移動します。
+## 使い方
 
-```bash
-cd pegasus-docker-compose
+### コマンドラインから
+
+pegasus をコマンドラインから使用するには、以下のようなコマンドを実行します。
+
+```shell
+pegasus https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
+pegasus  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt
 ```
 
-3. `.env` ファイルを編集し、`TARGET_URL` をクロールしたいウェブサイトの URL に設定します。
+- `https://example.com/start-page`: クロールを開始するベース URL を指定します。
+- `output_directory`: Markdown ファイルを保存するディレクトリを指定します。
+- `--exclude-selectors`: 除外する CSS セレクターをスペース区切りで指定します（オプション）。
+- `--include-domain`: クロールを特定のドメインに限定します（オプション）。
+- `--exclude-keywords`: URL に含まれる場合にページを除外するキーワードをスペース区切りで指定します（オプション）。
 
-4. Docker Compose を起動します。
+### Python スクリプトから
 
-```bash
-docker-compose up -d
+pegasus を Python スクリプトから使用するには、以下のようなコードを書きます。
+
+```python
+from pegasus import pegasus
+
+pegasus = pegasus(
+    base_url="https://example.com/start-page",
+    output_dir="output_directory",
+    exclude_selectors=['header', 'footer', 'nav'],
+    include_domain="example.com",
+    exclude_keywords=["login"]
+)
+pegasus.run()
 ```
 
-5. プロセスが完了すると、Markdown ファイルが `output` ディレクトリに出力されます。
+- `base_url`: クロールを開始するベース URL を指定します。
+- `output_dir`: Markdown ファイルを保存するディレクトリを指定します。
+- `exclude_selectors`: 除外する CSS セレクターのリストを指定します（オプション）。
+- `include_domain`: クロールを特定のドメインに限定します（オプション）。
+- `exclude_keywords`: URL に含まれる場合にページを除外するキーワードのリストを指定します（オプション）。
 
-### オプション
+## 特長
 
-`.env` ファイルで以下の環境変数を設定することで、Pegasus の動作をカスタマイズできます。
+- 指定した URL から始まり、リンクを再帰的にたどってウェブサイトを探索します。
+- HTML コンテンツを美しくフォーマットされた Markdown に変換します。
+- 柔軟な設定オプションにより、クロールと変換のプロセスをカスタマイズできます。
+- ヘッダー、フッター、ナビゲーションなどの不要な要素を除外できます。
+- 特定のドメインのみをクロールするように制限できます。
+- 特定のキーワードを含む URL を除外できます。
 
-* `TARGET_URL`: クロールするウェブサイトの URL (必須)
-* `OUTPUT_DIRECTORY`: Markdown ファイルを出力するディレクトリ (デフォルト: `./output`)
-* `DEPTH`: クロールする深さ (デフォルト: `-1` (無制限))
-* `LOG_LEVEL`: ログレベル (デフォルト: `INFO`)
+## 注意事項
 
-### 例
+- pegasus は、適切な使用方法とウェブサイトの利用規約に従ってご利用ください。
+- 過度なリクエストを送信しないよう、適切な遅延を設けてください。
 
-`https://www.example.com` をクロールし、Markdown ファイルを `./my-output` ディレクトリに出力する例:
+## ライセンス
 
-```
-TARGET_URL=https://www.example.com
-OUTPUT_DIRECTORY=./my-output
-```
+このプロジェクトは MIT ライセンスの下で公開されています。詳細については、[LICENSE](LICENSE) ファイルを参照してください。
 
-### 注意
+## 貢献
 
-* Pegasus は、ウェブサイトの構造やコンテンツによっては、期待通りの結果を得られない場合があります。
-* 大規模なウェブサイトをクロールする場合は、時間とリソースの使用量に注意してください。
-* クロールする前に、ウェブサイトの利用規約を確認してください。
+プルリクエストや改善案は大歓迎です。バグ報告や機能リクエストがある場合は、issue を作成してください。
 
-## 📝 更新情報
+---
 
-*最新情報については、CHANGELOG.md ファイルを参照してください。*
-
-## 🤝 コントリビューション
-
-*コントリビューションは大歓迎です！*
-
-## 📄 ライセンス
-
-*このプロジェクトは、[ライセンス名] ライセンスの下でライセンスされています。*
-
-## 🙏 謝辞
-
-*Pegasus の開発に貢献してくれたすべての人に感謝します。*
-
+pegasus を使用すれば、ウェブサイトを再帰的に探索し、コンテンツを美しい Markdown ドキュメントに変換できます。ドキュメンテーションの自動化、コンテンツの管理、データ分析などにぜひお役立てください！
