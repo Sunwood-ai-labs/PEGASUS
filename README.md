@@ -1,7 +1,7 @@
 <p align="center">
 <img src="https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS.jpeg" width="100%">
 <br>
-<h1 align="center">PEGASUS</h1>
+<h1 align="center">P.E.G.A.S.U.S</h1>
 <h2 align="center">
   ～ Parsing Extracting Generating Automated Scraping Utility System ～
 <br>
