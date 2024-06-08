@@ -1,13 +1,19 @@
 from setuptools import setup, find_packages
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+
 setup(
     name='pegasus-surf',
-    version='0.1.0',
+    version='0.1.1',
     description='A package for scraping websites and converting them to Markdown',
     author='Maki',
     author_email='sunwood.ai.labs@gmail.com',
     url='https://github.com/Sunwood-ai-labs/PEGASUS',
     packages=find_packages(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     install_requires=[
         'requests',
         'markdownify',
