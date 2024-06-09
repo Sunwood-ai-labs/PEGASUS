@@ -52,31 +52,30 @@ pip install pegasus-surf
 pegasus をコマンドラインから使用するには、以下のようなコマンドを実行します。
 
 ```shell
-pegasus https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
+# 単一の URL からスクレイピングを開始
+pegasus --base-url https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
 
-pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt 
-
-# 深度を指定して実行
+# 探索深度を指定して実行
 pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
 
-# URLが記載されたテキストファイルを指定して実行
-pegasus  --url-file urls.txt output/roomba --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs  --exclude-keywords login --output-extension .txt --max-depth 1
+# URL リストが記載されたテキストファイルからスクレイピングを開始
+pegasus --url-file urls.txt output/roomba --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1
 
-# LLMを使った仕分け
-pegasus  --url-file urls.txt output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs  --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"  
+# LLM を使用したサイトの分類を行いながらスクレイピング
+pegasus --url-file urls.txt output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"
 ```
 
-- `https://example.com/start-page`: クロールを開始するベース URL を指定します。
-- `output_directory`: Markdown ファイルを保存するディレクトリを指定します。
-- `--exclude-selectors`: 除外する CSS セレクターをスペース区切りで指定します（オプション）。 
-- `--include-domain`: クロールを特定のドメインに限定します（オプション）。
-- `--exclude-keywords`: URL に含まれる場合にページを除外するキーワードをスペース区切りで指定します（オプション）。
-- **`--output-extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。**
-- **`--dust-size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。**
-- **`--max-depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。**
-- **`--url-file`: スクレイピングするURLが記載されたテキストファイルを指定します。**
-- **`--system-message`: LLMのシステムメッセージを指定します（サイトの分類に使用）。**
-- **`--classification-prompt`: LLMのサイト分類プロンプトを指定します。TrueまたはFalseを返すようにしてください。**
+- `--base-url`: スクレイピングを開始するベース URL を指定します。
+- `--url-file`: スクレイピングする URL が記載されたテキストファイルを指定します。
+- `--output-extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。
+- `--dust-size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。
+- `--max-depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。
+- `--system-message`: LLM のシステムメッセージを指定します（サイトの分類に使用）。
+- `--classification-prompt`: LLM のサイト分類プロンプトを指定します。True または False を返すようにしてください。
+- `--max-retries`: フィルタリングのリトライ回数の上限を指定します（デフォルト: 3）。
+- `--model`: LLM のモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
+- `--rate-limit-sleep`: レート制限エラー時のスリープ時間を秒単位で指定します（デフォルト: 60）。
+- `--other-error-sleep`: その他のエラー時のスリープ時間を秒単位で指定します（デフォルト: 10）。
 
 ### Python スクリプトから
 
@@ -86,40 +85,51 @@ pegasus を Python スクリプトから使用するには、以下のような�
 from pegasus import Pegasus
 
 pegasus = Pegasus(
-    base_url="https://example.com/start-page",
     output_dir="output_directory", 
     exclude_selectors=['header', 'footer', 'nav'],
     include_domain="example.com",
-    exclude_keywords=["login"]
+    exclude_keywords=["login"],
+    output_extension=".txt",
+    dust_size=500,
+    max_depth=2,
+    system_message="You are an assistant to determine if the content of a given website contains useful information related to a specific topic. If it contains relevant and beneficial information about the topic, answer 'True', otherwise answer 'False'.",
+    classification_prompt="Does the content of the following website provide beneficial information about the Roomba API or iRobot? If so, answer 'True', if not, answer 'False'.",
+    max_retries=5,
+    model="gemini/gemini-1.5-pro-latest",
+    rate_limit_sleep=30,
+    other_error_sleep=5
 )
-pegasus.run()
+pegasus.run("https://example.com/start-page")
 ```
 
-- `base_url`: クロールを開始するベース URL を指定します。
 - `output_dir`: Markdown ファイルを保存するディレクトリを指定します。
 - `exclude_selectors`: 除外する CSS セレクターのリストを指定します（オプション）。
 - `include_domain`: クロールを特定のドメインに限定します（オプション）。
 - `exclude_keywords`: URL に含まれる場合にページを除外するキーワードのリストを指定します（オプション）。
-- **`output_extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。**
-- **`dust_size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。**
-- **`max_depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。**
-- **`system_message`: LLMのシステムメッセージを指定します（サイトの分類に使用）。**
-- **`classification_prompt`: LLMのサイト分類プロンプトを指定します。TrueまたはFalseを返すようにしてください。**
+- `output_extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。
+- `dust_size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。
+- `max_depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。
+- `system_message`: LLM のシステムメッセージを指定します（サイトの分類に使用）。
+- `classification_prompt`: LLM のサイト分類プロンプトを指定します。True または False を返すようにしてください。
+- `max_retries`: フィルタリングのリトライ回数の上限を指定します（デフォルト: 3）。
+- `model`: LLM のモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
+- `rate_limit_sleep`: レート制限エラー時のスリープ時間を秒単位で指定します（デフォルト: 60）。
+- `other_error_sleep`: その他のエラー時のスリープ時間を秒単位で指定します（デフォルト: 10）。
 
 ## 特長
 
 - 指定した URL から始まり、リンクを再帰的にたどってウェブサイトを探索します。
 - HTML コンテンツを美しくフォーマットされた Markdown に変換します。
 - 柔軟な設定オプションにより、クロールと変換のプロセスをカスタマイズできます。
-- ヘッダー、フッター、ナビゲーションなどの不要な要素を除外できます。 
+- ヘッダー、フッター、ナビゲーションなどの不要な要素を除外できます。
 - 特定のドメインのみをクロールするように制限できます。
 - 特定のキーワードを含む URL を除外できます。
-- **URLリストを記載したテキストファイルを指定してスクレイピングできます。**
-- **LLMを使ってスクレイピングしたサイトを分類できます。**
+- URL リストを記載したテキストファイルを指定してスクレイピングできます。
+- LLM を使ってスクレイピングしたサイトを分類できます。
 
 ## 注意事項
 
-- pegasus は、適切な使用方法とウェブサイトの利用規約に従ってご利用ください。 
+- pegasus は、適切な使用方法とウェブサイトの利用規約に従ってご利用ください。
 - 過度なリクエストを送信しないよう、適切な遅延を設けてください。
 
 ## ライセンス
@@ -133,6 +143,3 @@ pegasus.run()
 ---
 
 pegasus を使用すれば、ウェブサイトを再帰的に探索し、コンテンツを美しい Markdown ドキュメントに変換できます。ドキュメンテーションの自動化、コンテンツの管理、データ分析などにぜひお役立てください！
-```
-
-以上がREADMEの修正案です。リポジトリの更新内容を反映し、LLMを使ったサイト分類機能や新しいオプションについて説明を追加しました。使用例も拡充して、ツールの活用方法がより明確になるようにしています。
