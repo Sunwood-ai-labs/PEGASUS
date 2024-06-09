@@ -42,7 +42,7 @@ pegasus は、ウェブサイトを再帰的にクロールし、そのコンテ
 pip を使用して pegasus をインストールします。
 
 ```shell
-pip install pegasus
+pip install pegasus-surf
 ```
 
 ## 使い方
@@ -53,7 +53,18 @@ pegasus をコマンドラインから使用するには、以下のようなコ
 
 ```shell
 pegasus https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
-pegasus  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt
+
+pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt 
+
+# 深度を指定して実行
+pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
+
+# URLが記載されたテキストファイルを指定して実行
+pegasus  --url-file urls.txt output/roomba --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs  --exclude-keywords login --output-extension .txt --max-depth 1
+
+# LLMを使った仕分け
+pegasus  --url-file urls.txt output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs  --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"
+
 ```
 
 - `https://example.com/start-page`: クロールを開始するベース URL を指定します。
