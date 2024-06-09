@@ -146,18 +146,17 @@ pegasus.run("https://example.com/start-page")
 
 ### パッケージの構成
 
-![](https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_struct.svg)
+[View on Eraser![](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0/preview?elements=ooYqYlIqai8z1hvLott86w&type=embed)](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0?elements=ooYqYlIqai8z1hvLott86w)
 
 ### パッケージのフローチャート
 
 <p align="center">
-<img src="https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_flow.svg" width="50%">
+<a href="https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0?elements=GXyvnJ89wCRZwFdm00Zbmg">View on Eraser<br /><img src="https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0/preview?elements=GXyvnJ89wCRZwFdm00Zbmg&type=embed"  width="50%"/></a>
 </p>
 
 ### パッケージのER図
 
-![](https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_pack.svg)
-
+[View on Eraser![](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0/preview?elements=KStkmTRUuZ5AiJNPC8E40g&type=embed)](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0?elements=KStkmTRUuZ5AiJNPC8E40g)
 
 
 ## 🤝 貢献
