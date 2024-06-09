@@ -17,7 +17,10 @@ def main():
     parser.add_argument('--system-message', default=None, help='LiteLLMのシステムメッセージ（サイトの分類に使用）')
     parser.add_argument('--classification-prompt', default=None, help='LiteLLMのサイト分類プロンプト（TrueまたはFalseを返すようにしてください）')
     parser.add_argument('--max-retries', type=int, default=3, help='フィルタリングのリトライ回数の上限（デフォルト：3）')
-
+    parser.add_argument('--model', default='gemini/gemini-1.5-pro-latest', help='LiteLLMのモデル名 (デフォルト: gemini/gemini-1.5-pro-latest)')
+    parser.add_argument('--rate-limit-sleep', type=int, default=60, help='レート制限エラー時のスリープ時間（秒） (デフォルト: 60)')
+    parser.add_argument('--other-error-sleep', type=int, default=10, help='その他のエラー時のスリープ時間（秒） (デフォルト: 10)')
+    
     args = parser.parse_args()
 
     pegasus = Pegasus(
