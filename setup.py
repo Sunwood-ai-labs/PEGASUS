@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='pegasus-surf',
-    version='0.2.0',
+    version='0.2.1',
     description='A package for scraping websites and converting them to Markdown',
     author='Maki',
     author_email='sunwood.ai.labs@gmail.com',
