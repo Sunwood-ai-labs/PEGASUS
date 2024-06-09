@@ -142,6 +142,24 @@ pegasus.run("https://example.com/start-page")
 
 このプロジェクトはMITライセンスの下で公開されています。詳細については、[LICENSE](LICENSE)ファイルを参照してください。
 
+## 開発者用
+
+### パッケージの構成
+
+![](https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_struct.svg)
+
+### パッケージのフローチャート
+
+<p align="center">
+<img src="https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_flow.svg" width="50%">
+</p>
+
+### パッケージのER図
+
+![](https://huggingface.co/datasets/MakiAi/IconAssets/resolve/main/PEGASUS_pack.svg)
+
+
+
 ## 🤝 貢献
 
 プルリクエストや改善案は大歓迎です！🎉 バグ報告や機能リクエストがある場合は、issueを作成してください。😊
