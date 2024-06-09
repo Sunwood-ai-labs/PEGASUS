@@ -24,7 +24,7 @@
   <a href="https://hamaruki.com/"><b>[🌐 Website]</b></a> •
   <a href="https://github.com/Sunwood-ai-labs"><b>[🐱 GitHub]</b></a>
   <a href="https://x.com/hAru_mAki_ch"><b>[🐦 Twitter]</b></a> •
-  <a href="https://hamaruki.com/"><b>[🍀 Official Blog]</b></a>
+  <a href="https://hamaruki.com/tag/pegasus/"><b>[🍀 Official Blog]</b></a>
 </p>
 
 </h2>
@@ -35,51 +35,55 @@
 >このリポジトリのリリースノートやREADME、コミットメッセージの9割近くは[claude.ai](https://claude.ai/)や[ChatGPT4](https://chatgpt.com/)を活用した[AIRA](https://github.com/Sunwood-ai-labs/AIRA), [SourceSage](https://github.com/Sunwood-ai-labs/SourceSage), [Gaiah](https://github.com/Sunwood-ai-labs/Gaiah), [HarmonAI_II](https://github.com/Sunwood-ai-labs/HarmonAI_II)で生成しています。
 
 
-pegasus は、ウェブサイトを再帰的にクロールし、そのコンテンツを Markdown 形式に変換するパワフルで柔軟な Python パッケージです。指定した URL から始まり、リンクをたどって関連するページを探索し、HTML コンテンツを美しい Markdown ドキュメントに変換します。コマンドラインインターフェイス (CLI) から実行することも、Python スクリプトから直接使用することもできます。
+こんにちは！PEGASUSへようこそ！PEGASUSは、ウェブサイトを再帰的にクロールし、そのコンテンツを美しいMarkdown形式に変換するパワフルで柔軟なPythonパッケージです。
 
-## インストール
+PEGASUSを使えば、指定したURLから始まり、リンクをたどって関連するページを探索し、HTMLコンテンツを見やすいMarkdownドキュメントに変換することができます。コマンドラインインターフェイス（CLI）から実行することも、Pythonスクリプトから直接使用することもできるので、とっても便利なんです！
 
-pip を使用して pegasus をインストールします。
+## 🚀 インストール
+
+pipを使ってPEGASUSをインストールしましょう。以下のコマンドを実行するだけです！👇
 
 ```shell
 pip install pegasus-surf 
 ```
 
-## 使い方
+## 🎮 使い方
 
-### コマンドラインから
+### 🖥️ コマンドラインから
 
-pegasus をコマンドラインから使用するには、以下のようなコマンドを実行します。
+PEGASUSをコマンドラインから使用するには、以下のようなコマンドを実行します。
 
 ```shell
-# 単一の URL からスクレイピングを開始
+# 単一のURLからスクレイピングを開始 🌐
 pegasus --base-url https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
 
-# 探索深度を指定して実行
+# 探索深度を指定して実行 🔍
 pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
 
-# URL リストが記載されたテキストファイルからスクレイピングを開始
+# URLリストが記載されたテキストファイルからスクレイピングを開始 📜
 pegasus --url-file urls.txt output/roomba --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1
 
-# LLM を使用したサイトの分類を行いながらスクレイピング
+# LLMを使用したサイトの分類を行いながらスクレイピング 🧠
 pegasus --url-file urls.txt output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"
 ```
 
-- `--base-url`: スクレイピングを開始するベース URL を指定します。
-- `--url-file`: スクレイピングする URL が記載されたテキストファイルを指定します。
+オプションの意味はこんな感じです！👀
+
+- `--base-url`: スクレイピングを開始するベースURLを指定します。
+- `--url-file`: スクレイピングするURLが記載されたテキストファイルを指定します。
 - `--output-extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。
 - `--dust-size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。
 - `--max-depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。
-- `--system-message`: LLM のシステムメッセージを指定します（サイトの分類に使用）。
-- `--classification-prompt`: LLM のサイト分類プロンプトを指定します。True または False を返すようにしてください。
+- `--system-message`: LLMのシステムメッセージを指定します（サイトの分類に使用）。
+- `--classification-prompt`: LLMのサイト分類プロンプトを指定します。TrueまたはFalseを返すようにしてください。
 - `--max-retries`: フィルタリングのリトライ回数の上限を指定します（デフォルト: 3）。
-- `--model`: LLM のモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
+- `--model`: LLMのモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
 - `--rate-limit-sleep`: レート制限エラー時のスリープ時間を秒単位で指定します（デフォルト: 60）。
 - `--other-error-sleep`: その他のエラー時のスリープ時間を秒単位で指定します（デフォルト: 10）。
 
-### Python スクリプトから
+### 🐍 PythonスクリプトからPEGASUSを使う
 
-pegasus を Python スクリプトから使用するには、以下のようなコードを書きます。
+PEGASUSをPythonスクリプトから使用するには、以下のようなコードを書きます。
 
 ```python
 from pegasus import Pegasus
@@ -102,44 +106,46 @@ pegasus = Pegasus(
 pegasus.run("https://example.com/start-page")
 ```
 
-- `output_dir`: Markdown ファイルを保存するディレクトリを指定します。
-- `exclude_selectors`: 除外する CSS セレクターのリストを指定します（オプション）。
+パラメータの意味はこちらです！
+
+- `output_dir`: Markdownファイルを保存するディレクトリを指定します。
+- `exclude_selectors`: 除外するCSSセレクターのリストを指定します（オプション）。
 - `include_domain`: クロールを特定のドメインに限定します（オプション）。
-- `exclude_keywords`: URL に含まれる場合にページを除外するキーワードのリストを指定します（オプション）。
+- `exclude_keywords`: URLに含まれる場合にページを除外するキーワードのリストを指定します（オプション）。
 - `output_extension`: 出力ファイルの拡張子を指定します（デフォルト: .md）。
 - `dust_size`: ダストフォルダに移動するファイルサイズのしきい値をバイト単位で指定します（デフォルト: 1000）。
 - `max_depth`: 再帰処理の最大深度を指定します（デフォルト: 制限なし）。
-- `system_message`: LLM のシステムメッセージを指定します（サイトの分類に使用）。
-- `classification_prompt`: LLM のサイト分類プロンプトを指定します。True または False を返すようにしてください。
+- `system_message`: LLMのシステムメッセージを指定します（サイトの分類に使用）。
+- `classification_prompt`: LLMのサイト分類プロンプトを指定します。TrueまたはFalseを返すようにしてください。
 - `max_retries`: フィルタリングのリトライ回数の上限を指定します（デフォルト: 3）。
-- `model`: LLM のモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
+- `model`: LLMのモデル名を指定します（デフォルト: gemini/gemini-1.5-pro-latest）。
 - `rate_limit_sleep`: レート制限エラー時のスリープ時間を秒単位で指定します（デフォルト: 60）。
 - `other_error_sleep`: その他のエラー時のスリープ時間を秒単位で指定します（デフォルト: 10）。
 
-## 特長
+## ✨ PEGASUSの特長
 
-- 指定した URL から始まり、リンクを再帰的にたどってウェブサイトを探索します。
-- HTML コンテンツを美しくフォーマットされた Markdown に変換します。
-- 柔軟な設定オプションにより、クロールと変換のプロセスをカスタマイズできます。
-- ヘッダー、フッター、ナビゲーションなどの不要な要素を除外できます。
-- 特定のドメインのみをクロールするように制限できます。
-- 特定のキーワードを含む URL を除外できます。
-- URL リストを記載したテキストファイルを指定してスクレイピングできます。
-- LLM を使ってスクレイピングしたサイトを分類できます。
+- 指定したURLから始まり、リンクを再帰的にたどってウェブサイトを探索します。🔍
+- HTMLコンテンツを美しくフォーマットされたMarkdownに変換します。📝
+- 柔軟な設定オプションにより、クロールと変換のプロセスをカスタマイズできます。⚙️
+- ヘッダー、フッター、ナビゲーションなどの不要な要素を除外できます。🙅‍♀️
+- 特定のドメインのみをクロールするように制限できます。🌐
+- 特定のキーワードを含むURLを除外できます。🚫
+- URLリストを記載したテキストファイルを指定してスクレイピングできます。📜
+- LLMを使ってスクレイピングしたサイトを分類できます。🧠
 
-## 注意事項
+## ⚠️ 注意事項
 
-- pegasus は、適切な使用方法とウェブサイトの利用規約に従ってご利用ください。
-- 過度なリクエストを送信しないよう、適切な遅延を設けてください。
+- PEGASUSは、適切な使用方法とウェブサイトの利用規約に従ってご利用ください。🙏
+- 過度なリクエストを送信しないよう、適切な遅延を設けてください。⏰
 
-## ライセンス
+## 📜 ライセンス
 
-このプロジェクトは MIT ライセンスの下で公開されています。詳細については、[LICENSE](LICENSE) ファイルを参照してください。
+このプロジェクトはMITライセンスの下で公開されています。詳細については、[LICENSE](LICENSE)ファイルを参照してください。
 
-## 貢献
+## 🤝 貢献
 
-プルリクエストや改善案は大歓迎です。バグ報告や機能リクエストがある場合は、issue を作成してください。
+プルリクエストや改善案は大歓迎です！🎉 バグ報告や機能リクエストがある場合は、issueを作成してください。😊
 
 ---
 
-pegasus を使用すれば、ウェブサイトを再帰的に探索し、コンテンツを美しい Markdown ドキュメントに変換できます。ドキュメンテーションの自動化、コンテンツの管理、データ分析などにぜひお役立てください！
+PEGASUSを使用すれば、ウェブサイトを再帰的に探索し、コンテンツを美しいMarkdownドキュメントに変換できます。📜✨ ドキュメンテーションの自動化、コンテンツの管理、データ分析などにぜひお役立てください！🙌
