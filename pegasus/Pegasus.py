@@ -139,6 +139,11 @@ class Pegasus:
             markdown_content = markdownify.markdownify(str(soup))
             markdown_content = re.sub(r'\n{5,}', '\n\n\n\n', markdown_content)
 
+            # 文字化けチェック
+            if not self.is_valid_text(markdown_content):
+                logger.warning(f"文字化けを検出したため除外: {url}")
+                return 
+
             if not self.filter_site(markdown_content):
                 parsed_url = urlparse(url)
                 domain = parsed_url.netloc
@@ -187,6 +192,17 @@ class Pegasus:
             logger.error(f"ダウンロードエラー: {url}: {e}")
         except IOError as e:
             logger.error(f"書き込みエラー: {output_file}: {e}")
+
+    def is_valid_text(self, text):
+        # ASCII範囲外の文字の割合を計算
+        non_ascii_chars = re.findall(r'[^\x00-\x7F]', text)
+        non_ascii_ratio = len(non_ascii_chars) / len(text)
+        
+        # 割合が一定以上であれば文字化けとみなす
+        if non_ascii_ratio > 0.3:
+            return False
+        else:
+            return True
 
     def create_domain_summaries(self):
         for domain, summaries in self.domain_summaries.items():
