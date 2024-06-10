@@ -10,14 +10,15 @@ from art import *
 from litellm import completion
 from tqdm import tqdm
 import litellm
-# litellm.set_verbose=True
+from duckduckgo_search import DDGS
+import json
 
 logger = loguru.logger
 
 class Pegasus:
     def __init__(self, output_dir, exclude_selectors=None, include_domain=None, exclude_keywords=None, output_extension=".md", 
                  dust_size=1000, max_depth=None, system_message=None, classification_prompt=None, max_retries=3, 
-                 model='gemini/gemini-1.5-pro-latest', rate_limit_sleep=60, other_error_sleep=10):
+                 model='gemini/gemini-1.5-pro-latest', rate_limit_sleep=60, other_error_sleep=10, search_query=None, max_results=10, base_url=None, url_file="urls.txt"):
         self.output_dir = output_dir
         self.exclude_selectors = exclude_selectors
         self.include_domain = include_domain
@@ -33,6 +34,10 @@ class Pegasus:
         self.model = model
         self.rate_limit_sleep = rate_limit_sleep
         self.other_error_sleep = other_error_sleep
+        self.search_query = search_query
+        self.max_results = max_results
+        self.base_url = base_url
+        self.url_file = url_file
         tprint("  Pegasus  ", font="rnd-xlarge")
         logger.info("初期化パラメータ:")
         logger.info(f"  output_dir: {output_dir}")
@@ -48,6 +53,34 @@ class Pegasus:
         logger.info(f"  model: {model}")
         logger.info(f"  rate_limit_sleep: {rate_limit_sleep}")
         logger.info(f"  other_error_sleep: {other_error_sleep}")
+        logger.info(f"  search_query: {search_query}")
+        logger.info(f"  max_results: {max_results}")
+        logger.info(f"  base_url: {base_url}")
+        logger.info(f"  url_file: {url_file}")
+        
+        
+    def search_scraping(self):
+        tprint(">>  Search  Scraping  ")
+        if self.search_query is None:
+            return
+
+        with DDGS() as ddgs:
+            results = list(ddgs.text(
+                keywords=self.search_query,
+                region='jp-jp',
+                safesearch='off',
+                timelimit=None,
+                max_results=self.max_results
+            ))
+
+        with open("urls.txt", "w", encoding="utf-8") as file:
+            for result in results:
+                url = result['href']
+                title = result['title']
+                body = result['body']
+                file.write(f"{url}, {title}, {body[:20]}\n")
+
+        logger.info(f"検索スクレイピング完了 .... {self.max_results}件取得")
 
     def filter_site(self, markdown_content):
         if(self.classification_prompt is None):
@@ -61,7 +94,7 @@ class Pegasus:
                     {"role": "user", "content": f"{self.classification_prompt}\n\n{markdown_content}"}
                 ]
                 response = completion(
-                    model="gemini/gemini-1.5-pro-latest", 
+                    model=self.model, 
                     messages=messages
                 )
                 content = response.get('choices', [{}])[0].get('message', {}).get('content')
@@ -77,9 +110,9 @@ class Pegasus:
                 logger.warning(f"フィルタリングでエラーが発生しました。リトライします。（{retry_count}/{self.max_retries}）\nError: {e}")
                 
                 if "429" in str(e):
-                    sleep_time = self.rate_limit_sleep  # レート制限エラー時のスリープ時間をself.rate_limit_sleepから取得
+                    sleep_time = self.rate_limit_sleep
                 else:
-                    sleep_time = self.other_error_sleep  # その他のエラー時のスリープ時間をself.other_error_sleepから取得
+                    sleep_time = self.other_error_sleep
                 
                 for _ in tqdm(range(sleep_time), desc="Sleeping", unit="s"):
                     time.sleep(1)
@@ -87,7 +120,7 @@ class Pegasus:
         logger.error(f"フィルタリングに失敗しました。リトライ回数の上限に達しました。（{self.max_retries}回）")
         return True
     
-    def download_and_convert(self, url, depth=0):
+    def download_and_convert(self, url, title, depth=0):
         if url in self.visited_urls:
             return
         self.visited_urls.add(url)
@@ -130,7 +163,7 @@ class Pegasus:
                 with open(output_file, 'w', encoding='utf-8') as file:
                     file.write(markdown_content)
 
-                logger.info(f"[{depth}]変換成功: {url} ---> {output_file} [{len(markdown_content)/1000}kb]")
+                logger.info(f"[Depth:{depth}]変換成功: {url} ---> {output_file} [{len(markdown_content)/1000}kb]")
 
                 if domain not in self.domain_summaries:
                     self.domain_summaries[domain] = []
@@ -148,7 +181,7 @@ class Pegasus:
                                 if any(keyword in absolute_url for keyword in self.exclude_keywords):
                                     continue
                             absolute_url = absolute_url.split('#')[0]
-                            self.download_and_convert(absolute_url, depth + 1)
+                            self.download_and_convert(absolute_url, title, depth + 1)
 
         except requests.exceptions.RequestException as e:
             logger.error(f"ダウンロードエラー: {url}: {e}")
@@ -162,8 +195,21 @@ class Pegasus:
                 file.write('\n\n'.join(summaries))
             logger.info(f"サマリーファイル作成: {summary_file}")
 
-    def run(self, base_url):
-        logger.info(f"スクレイピング開始: base_url={base_url}")
-        self.download_and_convert(base_url)
+    def recursive_scraping(self):
+        tprint(">>  Recursive  Scraping  ")
+        logger.info("再帰スクレイピング開始")
+        if self.base_url:
+            logger.info(f"base_url={self.base_url} から再帰スクレイピングを開始します")
+            self.download_and_convert(self.base_url, "")
+        else:
+            with open("urls.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    parts = line.strip().split(",")
+                    url = parts[0]
+                    title = parts[1] if len(parts) > 1 else ""
+                    logger.info(f"---------------------------------------")
+                    logger.info(f"スクレイピング開始: url={url}")
+                    if(title): logger.info(f"タイトル: {title})")
+                    self.download_and_convert(url, title)
         self.create_domain_summaries()
-        logger.info("スクレイピング完了")
+        logger.info("再帰スクレイピング完了")
