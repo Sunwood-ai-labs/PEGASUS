@@ -53,18 +53,25 @@ pip install pegasus-surf
 
 PEGASUSをコマンドラインから使用するには、以下のようなコマンドを実行します。
 
+#### 検索スクレイピング
+```shell
+pegasus search --search-query "お好み焼き レシピ"
+```
+
+#### 再帰スクレイピング
+
 ```shell
 # 単一のURLからスクレイピングを開始 🌐
-pegasus --base-url https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
+pegasus recursive --base-url https://www.otafuku.co.jp/recipe/cook/noodle/nood01.html --output_dir output/yakisoba --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension .txt
 
 # 探索深度を指定して実行 🔍
-pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
+pegasus recursive --base-url  https://docs.eraser.io/docs/what-is-eraser  --output_dir output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
 
 # URLリストが記載されたテキストファイルからスクレイピングを開始 📜
-pegasus --url-file urls.txt output/roomba --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1
+pegasus recursive --url-file urls.txt  --output_dir output/okonomi --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1
 
 # LLMを使用したサイトの分類を行いながらスクレイピング 🧠
-pegasus --url-file urls.txt output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"
+pegasus recursive --url-file urls.txt  --output_dir output/roomba2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --exclude-keywords login --output-extension .txt --max-depth 1 --system-message "あなたは、与えられたウェブサイトのコンテンツが特定のトピックに関連する有用な情報を含んでいるかどうかを判断するアシスタントです。トピックに関連する有益な情報が含まれている場合は「True」、そうでない場合は「False」と回答してください。" --classification-prompt "次のウェブサイトのコンテンツは、Roomba APIやiRobotに関する有益な情報を提供していますか？ 提供している場合は「True」、そうでない場合は「False」と回答してください。"
 ```
 
 オプションの意味はこんな感じです！👀
@@ -158,6 +165,11 @@ pegasus.run("https://example.com/start-page")
 
 [View on Eraser![](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0/preview?elements=KStkmTRUuZ5AiJNPC8E40g&type=embed)](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0?elements=KStkmTRUuZ5AiJNPC8E40g)
 
+### SourceSage
+
+```shell
+sourcesage --mode DocuMind --docuMind-model "gemini/gemini-1.5-pro-latest" --docuMind-db ".SourceSageAssets\DOCUMIND\Repository_summary.md" --docuMind-release-report ".SourceSageAssets\RELEASE_REPORT\Report_v0.3.0.md"  --docuMind-changelog ".SourceSageAssets\Changelog\CHANGELOG_release_5.0.0.md"  --docuMind-output ".SourceSageAssets/DOCUMIND/RELEASE_NOTES_v0.3.0.md"  --docuMind-prompt-output ".SourceSageAssets/DOCUMIND/_PROMPT_v0.3.0.md"  --repo-name "SourceSage" --repo-version "v0.3.0"
+```
 
 ## 🤝 貢献
 

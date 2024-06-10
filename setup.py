@@ -23,6 +23,7 @@ setup(
         'litellm',
         'python-dotenv',
         'google-generativeai',
+        'duckduckgo-search',
     ],
     entry_points={
         'console_scripts': [
