@@ -5,9 +5,8 @@ load_dotenv(verbose=True)
 
 def main():
     parser = argparse.ArgumentParser(description='Pegasus')
-    parser.add_argument('--base-url', help='スクレイピングを開始するベースURL')
-    parser.add_argument('--url-file', help='スクレイピングするURLが記載されたテキストファイル')
-    parser.add_argument('output_dir', help='Markdownファイルの出力ディレクトリ')
+    parser.add_argument('mode', choices=['search', 'recursive'], help='実行モード（検索スクレイピングまたは再帰スクレイピング）')
+    parser.add_argument('--output_dir', default='output', help='Markdownファイルの出力ディレクトリ')
     parser.add_argument('--exclude-selectors', nargs='+', help='除外するCSSセレクター')
     parser.add_argument('--include-domain', default='', help='URLマッチングに含めるドメイン')
     parser.add_argument('--exclude-keywords', nargs='+', help='URLマッチングから除外するキーワード')
@@ -20,7 +19,11 @@ def main():
     parser.add_argument('--model', default='gemini/gemini-1.5-pro-latest', help='LiteLLMのモデル名 (デフォルト: gemini/gemini-1.5-pro-latest)')
     parser.add_argument('--rate-limit-sleep', type=int, default=60, help='レート制限エラー時のスリープ時間（秒） (デフォルト: 60)')
     parser.add_argument('--other-error-sleep', type=int, default=10, help='その他のエラー時のスリープ時間（秒） (デフォルト: 10)')
-    
+    parser.add_argument('--search-query', help='検索スクレイピングで使用するクエリ')
+    parser.add_argument('--max-results', type=int, default=3, help='検索スクレイピングの最大数')
+    parser.add_argument('--base-url', help='再帰スクレイピングを開始するベースURL')
+    parser.add_argument('--url-file', default="urls.txt", help='スクレイピングするURLが記載されたテキストファイル')
+
     args = parser.parse_args()
 
     pegasus = Pegasus(
@@ -33,18 +36,20 @@ def main():
         max_depth=args.max_depth,
         system_message=args.system_message,
         classification_prompt=args.classification_prompt,
-        max_retries=args.max_retries
+        max_retries=args.max_retries,
+        model=args.model,
+        rate_limit_sleep=args.rate_limit_sleep,
+        other_error_sleep=args.other_error_sleep,
+        search_query=args.search_query,
+        max_results=args.max_results,
+        base_url=args.base_url,
+        url_file=args.url_file
     )
 
-    if args.base_url:
-        pegasus.run(args.base_url)
-    elif args.url_file:
-        with open(args.url_file, 'r') as file:
-            urls = file.read().splitlines()
-            for url in urls:
-                pegasus.run(url)
-    else:
-        parser.error("--base-url または --url-file のいずれかを指定してください。")
+    if args.mode == 'search':
+        pegasus.search_scraping()
+    elif args.mode == 'recursive':
+        pegasus.recursive_scraping()
 
 if __name__ == '__main__':
     main()
