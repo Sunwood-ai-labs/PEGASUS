@@ -55,7 +55,7 @@ PEGASUSをコマンドラインから使用するには、以下のようなコ�
 
 ```shell
 # 単一のURLからスクレイピングを開始 🌐
-pegasus --base-url https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension txt
+pegasus --base-url https://example.com/start-page output_directory --exclude-selectors header footer nav --include-domain example.com --exclude-keywords login --output-extension .txt
 
 # 探索深度を指定して実行 🔍
 pegasus  --base-url  https://docs.eraser.io/docs/what-is-eraser output/eraser_docs2 --exclude-selectors header footer nav aside .sidebar .header .footer .navigation .breadcrumbs --include-domain docs.eraser.io --exclude-keywords login --output-extension .txt --max-depth 2
