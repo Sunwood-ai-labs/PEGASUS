@@ -165,6 +165,11 @@ pegasus.run("https://example.com/start-page")
 
 [View on Eraser![](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0/preview?elements=KStkmTRUuZ5AiJNPC8E40g&type=embed)](https://app.eraser.io/workspace/8cnaevNcF1kxMsfSfGl0?elements=KStkmTRUuZ5AiJNPC8E40g)
 
+### SourceSage
+
+```shell
+sourcesage --mode DocuMind --docuMind-model "gemini/gemini-1.5-pro-latest" --docuMind-db ".SourceSageAssets\DOCUMIND\Repository_summary.md" --docuMind-release-report ".SourceSageAssets\RELEASE_REPORT\Report_v0.3.0.md"  --docuMind-changelog ".SourceSageAssets\Changelog\CHANGELOG_release_5.0.0.md"  --docuMind-output ".SourceSageAssets/DOCUMIND/RELEASE_NOTES_v0.3.0.md"  --docuMind-prompt-output ".SourceSageAssets/DOCUMIND/_PROMPT_v0.3.0.md"  --repo-name "SourceSage" --repo-version "v0.5.0"
+```
 
 ## 🤝 貢献
 
